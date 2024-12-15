@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Quadtree Division</title>
+  </head>
+  <body>
+    <h1>SVG Quadtree Division</h1>
+    <input type="file" id="svgFileInput" accept=".svg" />
+    <br />
+    <svg
+      id="svgContainer"
+      width="500"
+      height="500"
+      style="border: 1px solid black; margin-top: 10px"
+    ></svg>
+
+    <script>
+      document
+        .getElementById("svgFileInput")
+        .addEventListener("change", handleFileUpload);
+
+      function handleFileUpload(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(
+            e.target.result,
+            "image/svg+xml"
+          );
+          const svgElement = svgDoc.documentElement;
+
+          // 清除现有内容
+          const svgContainer = document.getElementById("svgContainer");
+          while (svgContainer.firstChild) {
+            svgContainer.removeChild(svgContainer.firstChild);
+          }
+
+          // 添加上传的 SVG 到容器
+          svgContainer.appendChild(svgElement.cloneNode(true));
+
+          // 获取 SVG 的边界框
+          const boundingBox = svgContainer.getBBox();
+          const maxDepth = 4; // 设定分割深度
+
+          // 开始四叉树分割
+          quadtreeDivision(
+            svgContainer,
+            boundingBox.x,
+            boundingBox.y,
+            boundingBox.width,
+            boundingBox.height,
+            maxDepth
+          );
+        };
+        reader.readAsText(file);
+      }
+
+      // 四叉树分割函数
+      function quadtreeDivision(container, x, y, width, height, depth) {
+        if (depth === 0) return; // 递归终止条件
+
+        // 绘制当前区域的边框
+        const rect = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "rect"
+        );
+        rect.setAttribute("x", x);
+        rect.setAttribute("y", y);
+        rect.setAttribute("width", width);
+        rect.setAttribute("height", height);
+        rect.setAttribute("fill", "none");
+        rect.setAttribute("stroke", "blue");
+        rect.setAttribute("stroke-width", "0.5");
+        container.appendChild(rect);
+
+        // 递归分割为四个区域
+        const halfWidth = width / 2;
+        const halfHeight = height / 2;
+
+        quadtreeDivision(container, x, y, halfWidth, halfHeight, depth - 1); // 左上
+        quadtreeDivision(
+          container,
+          x + halfWidth,
+          y,
+          halfWidth,
+          halfHeight,
+          depth - 1
+        ); // 右上
+        quadtreeDivision(
+          container,
+          x,
+          y + halfHeight,
+          halfWidth,
+          halfHeight,
+          depth - 1
+        ); // 左下
+        quadtreeDivision(
+          container,
+          x + halfWidth,
+          y + halfHeight,
+          halfWidth,
+          halfHeight,
+          depth - 1
+        ); // 右下
+      }
+    </script>
+  </body>
+</html>

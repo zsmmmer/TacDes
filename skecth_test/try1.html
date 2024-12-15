@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Polygon Approximation and Grid Intersection</title>
+    <style>
+      /* 2x2 网格布局 */
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+      }
+      svg {
+        border: 1px solid black;
+      }
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SVG Polygon Approximation and Grid Intersection</h1>
+    <div class="container">
+      <!-- Step 1: 原始路径 -->
+      <div>
+        <h2>1. 原始路径</h2>
+        <svg
+          id="originalPath"
+          width="300"
+          height="200"
+          viewBox="0 0 1325.44 892.33"
+        >
+          <path
+            id="path1"
+            d="M458,261.8c68.13,68.12,227.51,91.24,286.4-32,56.13-117.49,273.17-85.37,398.78,40.24s329.27,162.2,329.27,329.27,7.31,313.42-159.76,313.42-490.24,167.07-490.24,0S649.32,903,500.54,754.17s-313.42-69.51-313.42-287.8-87.8-370.74,0-370.74S458,261.8,458,261.8Z"
+            transform="translate(-147.6 -95.13)"
+            fill="none"
+            stroke="black"
+            stroke-width="2"
+          />
+        </svg>
+      </div>
+
+      <!-- Step 2: 多边形逼近 -->
+      <div>
+        <h2>2. 多边形逼近</h2>
+        <svg
+          id="polygonApproximation"
+          width="300"
+          height="200"
+          viewBox="0 0 1325.44 892.33"
+        ></svg>
+      </div>
+
+      <!-- Step 3: 外边界矩形和网格线 -->
+      <div>
+        <h2>3. 外边界和网格线</h2>
+        <svg
+          id="gridWithBoundingBox"
+          width="300"
+          height="200"
+          viewBox="0 0 1325.44 892.33"
+        ></svg>
+      </div>
+
+      <!-- Step 4: 多边形与网格线的交点 -->
+      <div>
+        <h2>4. 交点标记</h2>
+        <svg
+          id="gridWithIntersections"
+          width="300"
+          height="200"
+          viewBox="0 0 1325.44 892.33"
+        ></svg>
+      </div>
+    </div>
+
+    <script>
+      // Ramer-Douglas-Peucker 多边形简化算法
+      function simplifyPath(points, tolerance) {
+        if (points.length <= 2) return points;
+
+        const firstPoint = points[0];
+        const lastPoint = points[points.length - 1];
+        let maxDist = 0;
+        let index = 0;
+
+        for (let i = 1; i < points.length - 1; i++) {
+          const dist = perpendicularDistance(points[i], firstPoint, lastPoint);
+          if (dist > maxDist) {
+            maxDist = dist;
+            index = i;
+          }
+        }
+
+        if (maxDist > tolerance) {
+          const left = simplifyPath(points.slice(0, index + 1), tolerance);
+          const right = simplifyPath(points.slice(index), tolerance);
+          return [...left.slice(0, -1), ...right];
+        } else {
+          return [firstPoint, lastPoint];
+        }
+      }
+
+      function perpendicularDistance(point, lineStart, lineEnd) {
+        const x0 = point.x,
+          y0 = point.y;
+        const x1 = lineStart.x,
+          y1 = lineStart.y;
+        const x2 = lineEnd.x,
+          y2 = lineEnd.y;
+        return (
+          Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1) /
+          Math.sqrt((y2 - y1) ** 2 + (x2 - x1) ** 2)
+        );
+      }
+
+      // 将 SVG 路径近似为多边形
+      function approximatePathToPolygon(path, numPoints, tolerance) {
+        const points = [];
+        const pathLength = path.getTotalLength();
+
+        for (let i = 0; i <= numPoints; i++) {
+          const point = path.getPointAtLength((i / numPoints) * pathLength);
+          points.push({ x: point.x, y: point.y });
+        }
+
+        return simplifyPath(points, tolerance); // 使用简化算法
+      }
+
+      // 检测网格线和多边形边的交点
+      function getIntersection(line1, line2) {
+        const { x1, y1, x2, y2 } = line1;
+        const { x3, y3, x4, y4 } = line2;
+
+        const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+        if (denom === 0) return null; // 平行，无交点
+
+        const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+        const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+
+        if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+          return {
+            x: x1 + ua * (x2 - x1),
+            y: y1 + ua * (y2 - y1),
+          };
+        }
+        return null;
+      }
+
+      // 创建网格并检测交点
+      function createGridLines(container, polygon, boundingBox, spacing) {
+        const startX = boundingBox.x;
+        const startY = boundingBox.y;
+        const endX = boundingBox.x + boundingBox.width;
+        const endY = boundingBox.y + boundingBox.height;
+
+        // 绘制外边界矩形
+        const boundingRect = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "rect"
+        );
+        boundingRect.setAttribute("x", startX);
+        boundingRect.setAttribute("y", startY);
+        boundingRect.setAttribute("width", boundingBox.width);
+        boundingRect.setAttribute("height", boundingBox.height);
+        boundingRect.setAttribute("stroke", "green");
+        boundingRect.setAttribute("fill", "none");
+        container.appendChild(boundingRect);
+
+        // 创建水平线并检测交点
+        for (let y = startY; y <= endY; y += spacing) {
+          let intersections = [];
+          for (let i = 0; i < polygon.length - 1; i++) {
+            const line = { x1: startX, y1: y, x2: endX, y2: y };
+            const edge = {
+              x1: polygon[i].x,
+              y1: polygon[i].y,
+              x2: polygon[i + 1].x,
+              y2: polygon[i + 1].y,
+            };
+            const intersection = getIntersection(line, edge);
+            if (intersection) intersections.push(intersection);
+          }
+          if (intersections.length >= 2) {
+            const gridLine = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line"
+            );
+            gridLine.setAttribute("x1", intersections[0].x);
+            gridLine.setAttribute("y1", intersections[0].y);
+            gridLine.setAttribute("x2", intersections[1].x);
+            gridLine.setAttribute("y2", intersections[1].y);
+            gridLine.setAttribute("stroke", "gray");
+            gridLine.setAttribute("stroke-width", "0.5");
+            container.appendChild(gridLine);
+          }
+        }
+
+        // 创建垂直线并检测交点
+        for (let x = startX; x <= endX; x += spacing) {
+          let intersections = [];
+          for (let i = 0; i < polygon.length - 1; i++) {
+            const line = { x1: x, y1: startY, x2: x, y2: endY };
+            const edge = {
+              x1: polygon[i].x,
+              y1: polygon[i].y,
+              x2: polygon[i + 1].x,
+              y2: polygon[i + 1].y,
+            };
+            const intersection = getIntersection(line, edge);
+            if (intersection) intersections.push(intersection);
+          }
+          if (intersections.length >= 2) {
+            const gridLine = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line"
+            );
+            gridLine.setAttribute("x1", intersections[0].x);
+            gridLine.setAttribute("y1", intersections[0].y);
+            gridLine.setAttribute("x2", intersections[1].x);
+            gridLine.setAttribute("y2", intersections[1].y);
+            gridLine.setAttribute("stroke", "gray");
+            gridLine.setAttribute("stroke-width", "0.5");
+            container.appendChild(gridLine);
+          }
+        }
+      }
+
+      window.onload = function () {
+        const svgPath = document.getElementById("path1");
+        const boundingBox = svgPath.getBBox();
+        const polygon = approximatePathToPolygon(svgPath, 100, 5);
+
+        // Step 2: 多边形逼近
+        const polygonSVG = document.getElementById("polygonApproximation");
+        polygon.forEach((point, i) => {
+          if (i < polygon.length - 1) {
+            const line = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line"
+            );
+            line.setAttribute("x1", point.x);
+            line.setAttribute("y1", point.y);
+            line.setAttribute("x2", polygon[i + 1].x);
+            line.setAttribute("y2", polygon[i + 1].y);
+            line.setAttribute("stroke", "blue");
+            line.setAttribute("stroke-width", "1");
+            polygonSVG.appendChild(line);
+          }
+        });
+
+        // Step 3: 外边界矩形和网格线
+        createGridLines(
+          document.getElementById("gridWithBoundingBox"),
+          polygon,
+          boundingBox,
+          50
+        );
+
+        // Step 4: 多边形与网格线的交点
+        createGridLines(
+          document.getElementById("gridWithIntersections"),
+          polygon,
+          boundingBox,
+          50
+        );
+      };
+    </script>
+  </body>
+</html>

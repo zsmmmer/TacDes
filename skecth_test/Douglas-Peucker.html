@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polygon Approximation with Simplification</title>
+    <style>
+      svg {
+        border: 1px solid black;
+        margin-top: 10px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Polygon Approximation with Simplification</h1>
+    <svg id="svgContainer" width="600" height="400" viewBox="0 0 600 400">
+      <!-- 自由曲线路径 -->
+      <path
+        id="originalPath"
+        d="M200,300 C250,100 350,100 400,300 C350,500 250,500 200,300 Z"
+        fill="none"
+        stroke="black"
+        stroke-width="2"
+      />
+    </svg>
+
+    <script>
+      // 将 SVG 路径近似为多边形
+      function approximatePathToPolygon(path, numPoints) {
+        const points = [];
+        const pathLength = path.getTotalLength();
+
+        for (let i = 0; i <= numPoints; i++) {
+          const point = path.getPointAtLength((i / numPoints) * pathLength);
+          if (points.length > 0) {
+            const lastPoint = points[points.length - 1];
+            const distance = Math.sqrt(
+              (point.x - lastPoint.x) ** 2 + (point.y - lastPoint.y) ** 2
+            );
+            // 只添加与上一个点的距离大于一定值的点，避免过密
+            if (distance > 5.0) {
+              // 这里增大距离值，避免过密
+              points.push({ x: point.x, y: point.y });
+            }
+          } else {
+            points.push({ x: point.x, y: point.y });
+          }
+        }
+
+        console.log("生成的原始多边形点数:", points.length);
+        return points;
+      }
+
+      // Douglas-Peucker 算法简化多边形点集
+      function simplifyPath(points, epsilon) {
+        if (points.length <= 2) return points;
+
+        let dmax = 0;
+        let index = 0;
+
+        // 找出距离起点和终点的垂直距离最大的点
+        for (let i = 1; i < points.length - 1; i++) {
+          const d = perpendicularDistance(
+            points[i],
+            points[0],
+            points[points.length - 1]
+          );
+          if (d > dmax) {
+            index = i;
+            dmax = d;
+          }
+        }
+
+        console.log(`最大距离 dmax: ${dmax}, epsilon: ${epsilon}`);
+        if (dmax > epsilon) {
+          // 如果 dmax 超过 epsilon，则递归处理分割的两部分
+          const left = simplifyPath(points.slice(0, index + 1), epsilon);
+          const right = simplifyPath(points.slice(index), epsilon);
+
+          console.log(
+            `递归简化中：左侧点数 ${left.length}，右侧点数 ${right.length}`
+          );
+          // 去掉右侧的第一个点以避免重复，并连接结果
+          return left.concat(right.slice(1));
+        } else {
+          // 否则返回两个端点
+          console.log(`简化到极限，返回两个点。`);
+          return [points[0], points[points.length - 1]];
+        }
+      }
+
+      // 计算点到线段的垂直距离
+      function perpendicularDistance(point, lineStart, lineEnd) {
+        const dx = lineEnd.x - lineStart.x;
+        const dy = lineEnd.y - lineStart.y;
+        const mag = Math.sqrt(dx * dx + dy * dy);
+        const u =
+          ((point.x - lineStart.x) * dx + (point.y - lineStart.y) * dy) /
+          (mag * mag);
+
+        const closestPoint = {
+          x: lineStart.x + u * dx,
+          y: lineStart.y + u * dy,
+        };
+
+        const dist = Math.sqrt(
+          (point.x - closestPoint.x) ** 2 + (point.y - closestPoint.y) ** 2
+        );
+        return dist;
+      }
+
+      // 在 SVG 中绘制简化后的多边形点
+      function drawPolygonPoints(svgContainer, points) {
+        for (let i = 0; i < points.length - 1; i++) {
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("x1", points[i].x);
+          line.setAttribute("y1", points[i].y);
+          line.setAttribute("x2", points[i + 1].x);
+          line.setAttribute("y2", points[i + 1].y);
+          line.setAttribute("stroke", "blue");
+          line.setAttribute("stroke-width", "1");
+          svgContainer.appendChild(line);
+        }
+
+        // 闭合多边形
+        const closingLine = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+        closingLine.setAttribute("x1", points[points.length - 1].x);
+        closingLine.setAttribute("y1", points[points.length - 1].y);
+        closingLine.setAttribute("x2", points[0].x);
+        closingLine.setAttribute("y2", points[0].y);
+        closingLine.setAttribute("stroke", "blue");
+        closingLine.setAttribute("stroke-width", "1");
+        svgContainer.appendChild(closingLine);
+      }
+
+      window.onload = function () {
+        const svgContainer = document.getElementById("svgContainer");
+        const path = document.getElementById("originalPath");
+
+        // 使用 100 个点生成多边形
+        const polygonPoints = approximatePathToPolygon(path, 50);
+
+        // 使用 Douglas-Peucker 算法简化多边形点集
+        const epsilon = 5.0; // 增大 epsilon 以确保更多点被保留
+        const simplifiedPoints = simplifyPath(polygonPoints, epsilon);
+
+        // 检查生成的简化点数
+        console.log("简化后的多边形点数:", simplifiedPoints.length);
+
+        // 绘制简化后的多边形点
+        drawPolygonPoints(svgContainer, simplifiedPoints);
+      };
+    </script>
+  </body>
+</html>

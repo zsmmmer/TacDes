@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polygon Approximation Debugging</title>
+    <style>
+      svg {
+        border: 1px solid black;
+        margin-top: 10px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Polygon Approximation Debugging</h1>
+    <svg
+      id="svgContainer"
+      width="1200"
+      height="800"
+      clip-path="url(#polygonClip)"
+    >
+      <!-- 自由曲线路径 -->
+      <path
+        id="originalPath"
+        d="M200,300 C250,100 350,100 400,300 C350,500 250,500 200,300 Z"
+        fill="#cccccc"
+        stroke-width="2"
+      />
+      <path
+        id="fittedPolygon"
+        fill="none"
+        stroke="blue"
+        stroke-width="1"
+        clip-path="url(#polygonClip)"
+      />
+    </svg>
+
+    <defs>
+      <clipPath id="polygonClip">
+        <path id="clipPath" d="" />
+      </clipPath>
+    </defs>
+
+    <script>
+      // 将 SVG 路径近似为多边形
+      function approximatePathToPolygon(path, numPoints) {
+        const points = [];
+        const pathLength = path.getTotalLength();
+
+        for (let i = 0; i <= numPoints; i++) {
+          const point = path.getPointAtLength((i / numPoints) * pathLength);
+          points.push({ x: point.x, y: point.y });
+        }
+
+        return points;
+      }
+
+      // 在 SVG 中绘制多边形点（不简化）
+      function drawPolygonPoints(svgContainer, points) {
+        for (let i = 0; i < points.length - 1; i++) {
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("x1", points[i].x);
+          line.setAttribute("y1", points[i].y);
+          line.setAttribute("x2", points[i + 1].x);
+          line.setAttribute("y2", points[i + 1].y);
+          line.setAttribute("stroke", "blue");
+          line.setAttribute("stroke-width", "1");
+          svgContainer.appendChild(line);
+        }
+
+        // 闭合多边形
+        const closingLine = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "line"
+        );
+        closingLine.setAttribute("x1", points[points.length - 1].x);
+        closingLine.setAttribute("y1", points[points.length - 1].y);
+        closingLine.setAttribute("x2", points[0].x);
+        closingLine.setAttribute("y2", points[0].y);
+        closingLine.setAttribute("stroke", "blue");
+        closingLine.setAttribute("stroke-width", "2");
+        svgContainer.appendChild(closingLine);
+      }
+
+      // 计算包含多边形的最小矩形
+      function getBoundingBox(points) {
+        const minX = Math.min(...points.map((p) => p.x));
+        const maxX = Math.max(...points.map((p) => p.x));
+        const minY = Math.min(...points.map((p) => p.y));
+        const maxY = Math.max(...points.map((p) => p.y));
+        return { minX, maxX, minY, maxY };
+      }
+
+      // 绘制矩形网格
+      function drawGrid(svgContainer, boundingBox, spacing) {
+        const { minX, maxX, minY, maxY } = boundingBox;
+
+        // 绘制垂直线
+        for (let x = minX; x <= maxX; x += spacing) {
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("x1", x);
+          line.setAttribute("y1", minY);
+          line.setAttribute("x2", x);
+          line.setAttribute("y2", maxY);
+          line.setAttribute("stroke", "lightgray");
+          line.setAttribute("stroke-width", "0.5");
+          svgContainer.appendChild(line);
+        }
+
+        // 绘制水平线
+        for (let y = minY; y <= maxY; y += spacing) {
+          const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          line.setAttribute("x1", minX);
+          line.setAttribute("y1", y);
+          line.setAttribute("x2", maxX);
+          line.setAttribute("y2", y);
+          line.setAttribute("stroke", "lightgray");
+          line.setAttribute("stroke-width", "0.5");
+          svgContainer.appendChild(line);
+        }
+      }
+
+      // 计算线与多边形的交点
+      function getIntersectionPoints(lineStart, lineEnd, path) {
+        const intersections = [];
+        const pathLength = path.getTotalLength();
+        for (let i = 0; i < pathLength; i++) {
+          const point1 = path.getPointAtLength(i);
+          const point2 = path.getPointAtLength(i + 1);
+          const intersection = lineIntersect(
+            lineStart,
+            lineEnd,
+            point1,
+            point2
+          );
+          if (intersection) {
+            intersections.push(intersection);
+          }
+        }
+        return intersections;
+      }
+
+      // 线段相交计算（简单实现）
+      function lineIntersect(start1, end1, start2, end2) {
+        const a1 = end1.y - start1.y;
+        const b1 = start1.x - end1.x;
+        const c1 = a1 * start1.x + b1 * start1.y;
+
+        const a2 = end2.y - start2.y;
+        const b2 = start2.x - end2.x;
+        const c2 = a2 * start2.x + b2 * start2.y;
+
+        const delta = a1 * b2 - a2 * b1;
+        if (delta === 0) {
+          return null; // 平行
+        }
+
+        const x = (b2 * c1 - b1 * c2) / delta;
+        const y = (a1 * c2 - a2 * c1) / delta;
+
+        // 检查交点是否在两个线段内
+        if (
+          isPointOnSegment({ x, y }, start1, end1) &&
+          isPointOnSegment({ x, y }, start2, end2)
+        ) {
+          return { x, y };
+        }
+        return null;
+      }
+
+      // 检查点是否在线段上
+      function isPointOnSegment(point, start, end) {
+        return (
+          point.x >= Math.min(start.x, end.x) &&
+          point.x <= Math.max(start.x, end.x) &&
+          point.y >= Math.min(start.y, end.y) &&
+          point.y <= Math.max(start.y, end.y)
+        );
+      }
+
+      window.onload = function () {
+        const svgContainer = document.getElementById("svgContainer");
+        const path = document.getElementById("originalPath");
+
+        // 使用较多点（例如200个）生成多边形
+        const polygonPoints = approximatePathToPolygon(path, 25);
+
+        // 计算包含多边形的最小矩形
+        const boundingBox = getBoundingBox(polygonPoints);
+        drawGrid(svgContainer, boundingBox, 10); // 5为线间距
+
+        // 更新剪切路径
+        const clipPath = document.getElementById("clipPath");
+        let d = "M" + polygonPoints[0].x + "," + polygonPoints[0].y; // 移动到第一个点
+        for (let i = 1; i < polygonPoints.length; i++) {
+          d += " L" + polygonPoints[i].x + "," + polygonPoints[i].y; // 连接到下一个点
+        }
+        d += " Z"; // 闭合路径
+        clipPath.setAttribute("d", d); // 设置剪切路径
+
+        // 检查生成的点数
+        console.log("生成的多边形点数:", polygonPoints.length);
+
+        // 绘制生成的多边形点
+        drawPolygonPoints(svgContainer, polygonPoints);
+      };
+    </script>
+  </body>
+</html>

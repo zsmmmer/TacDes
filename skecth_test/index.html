@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas</title>
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script>
+  </head>
+  <body style="background: grey">
+    <div class="toolbar">
+      <button id="select" is-selected="False">select</button>
+      <div
+        class="line"
+        style="width: 1px; height: 20px; background-color: #000"
+      ></div>
+      <button id="draw" is-selected="False">draw</button>
+      <button id="pen" is-selected="False">pen</button>
+      <button id="text" is-selected="False">text</button>
+      <div
+        class="line"
+        style="width: 1px; height: 20px; background-color: #000"
+      ></div>
+      <button id="shape" is-selected="False">shape</button>
+      <button id="sensor" is-selected="False">sensor</button>
+      <button id="connector" is-selected="False">connector</button>
+      <div
+        class="line"
+        style="width: 1px; height: 20px; background-color: #000"
+      ></div>
+      <button id="wire" is-selected="False">wire</button>
+      <button id="connect" is-selected="False">connect</button>
+      <button id="auto" is-selected="False">auto</button>
+    </div>
+    <div class="canvas">
+      <svg
+        width="1200"
+        height="800"
+        viewBox="0 0 600 400"
+        baseProfile="full"
+        xmlns="http://www.w3.org/2000/svg"
+        style="background: white"
+      >
+        <rect x="700" y="500" width="30" height="30" fill="blue" />
+        <circle cx="70" cy="70" r="20" fill="red" />
+      </svg>
+    </div>
+
+    <script src="canvas.js"></script>
+  </body>
+</html>

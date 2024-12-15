@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Grid Generation and Mesh Optimization</title>
+  </head>
+  <body>
+    <h1>SVG Grid Generation and Mesh Optimization</h1>
+    <input type="file" id="svgFileInput" accept=".svg" />
+    <br />
+    <svg
+      id="svgContainer"
+      width="500"
+      height="500"
+      style="border: 1px solid black; margin-top: 10px"
+    ></svg>
+
+    <script>
+      document
+        .getElementById("svgFileInput")
+        .addEventListener("change", handleFileUpload);
+
+      function handleFileUpload(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(
+            e.target.result,
+            "image/svg+xml"
+          );
+          const svgElement = svgDoc.documentElement;
+
+          // 清除现有内容
+          const svgContainer = document.getElementById("svgContainer");
+          while (svgContainer.firstChild) {
+            svgContainer.removeChild(svgContainer.firstChild);
+          }
+
+          // 添加上传的 SVG 到容器
+          svgContainer.appendChild(svgElement.cloneNode(true));
+
+          // 获取 SVG 的边界框
+          const boundingBox = svgContainer.getBBox();
+
+          // 生成规则网格
+          const gridSize = 20; // 网格大小
+          generateGrid(svgContainer, boundingBox, gridSize);
+
+          // 应用网格优化
+          optimizeMesh(svgContainer, gridSize);
+        };
+        reader.readAsText(file);
+      }
+
+      // 生成规则网格并裁剪
+      function generateGrid(container, boundingBox, gridSize) {
+        const startX = boundingBox.x;
+        const startY = boundingBox.y;
+        const endX = boundingBox.x + boundingBox.width;
+        const endY = boundingBox.y + boundingBox.height;
+
+        for (let x = startX; x < endX; x += gridSize) {
+          for (let y = startY; y < endY; y += gridSize) {
+            const rect = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "rect"
+            );
+            rect.setAttribute("x", x);
+            rect.setAttribute("y", y);
+            rect.setAttribute("width", gridSize);
+            rect.setAttribute("height", gridSize);
+            rect.setAttribute("fill", "none");
+            rect.setAttribute("stroke", "gray");
+            rect.setAttribute("stroke-width", "0.5");
+
+            // 检查网格是否在多边形内（简单裁剪，假设在边界内的为有效网格）
+            if (x + gridSize <= endX && y + gridSize <= endY) {
+              container.appendChild(rect);
+            }
+          }
+        }
+      }
+
+      // 网格优化（拉普拉斯平滑）
+      function optimizeMesh(container, gridSize) {
+        // 获取所有网格节点（矩形）
+        const nodes = Array.from(container.querySelectorAll("rect"));
+
+        // 定义一个简单的拉普拉斯平滑函数
+        function laplacianSmoothing(nodes) {
+          const smoothFactor = 0.5;
+
+          nodes.forEach((node) => {
+            const x = parseFloat(node.getAttribute("x"));
+            const y = parseFloat(node.getAttribute("y"));
+
+            // 计算周围四个节点的平均位置 (简化实现，仅在规则网格中)
+            let neighbors = [
+              { x: x - gridSize, y: y },
+              { x: x + gridSize, y: y },
+              { x: x, y: y - gridSize },
+              { x: x, y: y + gridSize },
+            ];
+
+            let avgX = 0,
+              avgY = 0,
+              count = 0;
+
+            neighbors.forEach((neighbor) => {
+              const neighborNode = nodes.find(
+                (n) =>
+                  parseFloat(n.getAttribute("x")) === neighbor.x &&
+                  parseFloat(n.getAttribute("y")) === neighbor.y
+              );
+
+              if (neighborNode) {
+                avgX += neighbor.x;
+                avgY += neighbor.y;
+                count++;
+              }
+            });
+
+            if (count > 0) {
+              avgX /= count;
+              avgY /= count;
+
+              // 应用平滑因子更新节点位置
+              const newX = x + (avgX - x) * smoothFactor;
+              const newY = y + (avgY - y) * smoothFactor;
+
+              node.setAttribute("x", newX);
+              node.setAttribute("y", newY);
+            }
+          });
+        }
+
+        // 应用拉普拉斯平滑
+        laplacianSmoothing(nodes);
+      }
+    </script>
+  </body>
+</html>
