@@ -1,4 +1,5 @@
 function mouseMoved(event){
+    
     if(userFlowState==UserFlowState.WAITING_FOR_UPLOAD){
         return;//exit immediately
     }
