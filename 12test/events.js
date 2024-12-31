@@ -45,9 +45,10 @@ function mouseMoved(event){
    if(selectedPoint){
       //draw the point as circle
       const circle = svgOutput.getElementById("selectedPoint")
-      circle.setAttributeNS("cx",`${selectedPoint[0]}`);
-      circle.setAttributeNS("cy",`${selectedPoint[1]}`);
-      circle.setAttributeNS("fill", "red")
+      console.log(`circle: ${circle}`);
+      circle.setAttribute("cx",`${selectedPoint[0]}`);
+      circle.setAttribute("cy",`${selectedPoint[1]}`);
+      circle.setAttribute("fill", "red")
   
   
    }

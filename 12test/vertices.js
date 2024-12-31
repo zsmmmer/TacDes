@@ -2,6 +2,7 @@ import { svgPathProperties } from "./node_modules/svg-path-properties/dist/svg-p
 
 
 
+svgOutput = document.getElementById("output");
 
 
 document.getElementById("fileInput").addEventListener("change", (event) => {
@@ -18,11 +19,12 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
         "http://www.w3.org/2000/svg",
         "circle"
       );
-      circle.setAttributeNS("id","selectedPoint")
-      circle.setAttributeNS("r","5");    
-      circle.setAttributeNS("cx",0);
-      circle.setAttributeNS("cy",0);
-      circle.setAttributeNS("fill", "none")
+      circle.setAttribute("id","selectedPoint")
+      circle.setAttribute("r","5");    
+      circle.setAttribute("cx","0");
+      circle.setAttribute("cy","0");
+      circle.setAttribute("fill", "none");
+      svgOutput.appendChild(circle);
       
 
       paths.forEach((path, index) => {
@@ -65,11 +67,12 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
       console.log("SensorAreas:", sensorAreas);
 
       userFlowState = UserFlowState.WAITING_FOR_LINE_A_POINT_A;
-      instruction.innerHTML = "Please select the starting point of the entry scan line on the contour";
+      document.getElementById("instruction").innerHTML = "Please select the starting point of the entry scan line on the contour";
       
       })
-      reader.readAsText(file);
+      
     };
+    reader.readAsText(file);
   }
   console.log("testing");
   }
@@ -77,75 +80,8 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
 
 //mouse moved handler
 
-function distanceToSegment(px, py, x1, y1, x2, y2) {
-  // Vector AB
-  const dx1 = x2 - x1;
-  const dy1 = y2 - y1;
 
-  // Vector AP
-  const dx2 = px - x1;
-  const dy2 = py - y1;
 
-  // Dot products
-  const dotProduct = dx2 * dx1 + dy2 * dy1;
-  const lengthSquared = dx1 * dx1 + dy1 * dy1;
-
-  // Projection scalar t
-  const t = dotProduct / lengthSquared;
-
-  let closestX, closestY;
-
-  // Closest point on the segment
-  if (t < 0) {
-      closestX = x1;
-      closestY = y1;
-  } else if (t > 1) {
-      closestX = x2;
-      closestY = y2;
-  } else {
-      closestX = x1 + t * dx1;
-      closestY = y1 + t * dy1;
-  }
-
-  // Compute the distance from the point to the closest point on the segment
-  const distX = px - closestX;
-  const distY = py - closestY;
-
-  return Math.sqrt(distX * distX + distY * distY);
-}
-
-function closestPointOnSegment(px, py, x1, y1, x2, y2) {
-  // Vector AB
-  const dx1 = x2 - x1;
-  const dy1 = y2 - y1;
-
-  // Vector AP
-  const dx2 = px - x1;
-  const dy2 = py - y1;
-
-  // Dot products
-  const dotProduct = dx2 * dx1 + dy2 * dy1;
-  const lengthSquared = dx1 * dx1 + dy1 * dy1;
-
-  // Projection scalar t
-  const t = dotProduct / lengthSquared;
-
-  let closestX, closestY;
-
-  // Closest point on the segment
-  if (t < 0) {
-      closestX = x1;
-      closestY = y1;
-  } else if (t > 1) {
-      closestX = x2;
-      closestY = y2;
-  } else {
-      closestX = x1 + t * dx1;
-      closestY = y1 + t * dy1;
-  }
-
-  return [closestX,closestY];
-}
 
 
 // 使用 svg-path-properties 将路径采样为顶点

@@ -6,6 +6,7 @@ const parallelScanSamplingDistance = 10;
 const numOfVerticalLines = 10;
 const numOfHorizontalLines = 10;
 let vertices;
+let svgOutput;
 
 //UI State definitions
 const UserFlowState = {
@@ -22,5 +23,4 @@ const selectionTriggerDistance = 10;
 // 监听文件上传
 
 let userFlowState = UserFlowState.WAITING_FOR_UPLOAD;
-const instruction = document.getElementById("instruction");
-const svgOutput = document.getElementById("output");
+//const instruction = document.getElementById("instruction");
