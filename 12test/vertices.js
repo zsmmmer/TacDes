@@ -1,14 +1,7 @@
 import { svgPathProperties } from "./node_modules/svg-path-properties/dist/svg-path-properties.esm.js";
 
-//parameters
-const verticesSamplingNum = 50;
-const canvasWidth = 1600;
-const canvasHeight = 1200;
-const parallelScanSamplingDistance = 10;
-const numOfVerticalLines = 10;
-const numOfHorizontalLines = 10;
 
-// 监听文件上传
+
 
 
 document.getElementById("fileInput").addEventListener("change", (event) => {
@@ -20,7 +13,17 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
       const svgDoc = parser.parseFromString(reader.result, "image/svg+xml");
 
       const paths = svgDoc.querySelectorAll("path");
-      const svgOutput = document.getElementById("output");
+
+      const circle = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "circle"
+      );
+      circle.setAttributeNS("id","selectedPoint")
+      circle.setAttributeNS("r","5");    
+      circle.setAttributeNS("cx",0);
+      circle.setAttributeNS("cy",0);
+      circle.setAttributeNS("fill", "none")
+      
 
       paths.forEach((path, index) => {
         const id = `shape-${index}`;
@@ -36,7 +39,7 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
         shapes.push(shape);
 
         // 生成顶点并创建 SensorArea 实例
-        const vertices = samplePathVertices(d, verticesSamplingNum); // 采样 20 个点
+        vertices = samplePathVertices(d, verticesSamplingNum); // 采样 20 个点
         const sensorArea = new SensorArea(
           id,
           d,
@@ -53,117 +56,94 @@ document.getElementById("fileInput").addEventListener("change", (event) => {
         // 绘制多边形
         sensorArea.drawPolygon(svgOutput);
         
-        //start line drawing from here
-
-        //first, find one or more pairs of intersections between each y parallel and the sensor area
-        let verticalLineKeyPoints = [];
-        for(let y = 0; y <= canvasHeight; y+=parallelScanSamplingDistance){
-          let intersections = findPolygonLineYIntersections(vertices, y);
-  
-          if(intersections.length%2!=0){
-            console.log('Intersections are not in pairs. Might generate error.');
-          }
-          if(intersections.length == 0){
-            continue;//no intersection. don't draw. 
-          }
-  
-          //identify the two pairs on both edges of it
-          let minX = canvasWidth;
-          let maxX = 0;
-      
-          for (const point of intersections) {
-              if (point[0] < minX) minX = point[0];
-              if (point[0] > maxX) maxX = point[0];
-          }
-          // now minX and maxX are found
-          //next, evenly divide the segment by vertical lines
-          let verticalXs = [];
-          let dx = (maxX-minX)/(numOfVerticalLines+1);
-          for(let i = 1; i <= numOfVerticalLines; i++){
-            let xi = minX + i*dx;
-            verticalXs.push(xi);
-          }
-          verticalLineKeyPoints.push({y: y,verticalXs: verticalXs});
-          
-        }
-  
-        //formula for (n+1)th vertical curve:
-        //[verticalLineKeyPoints[m].verticalXs[n], verticalLineKeyPoints[m].y], where m = [0 : verticalLineKeyPoints.length-1]
-  
-        for(let n=0; n<numOfVerticalLines; n++){
-          let polyline = []
-          for(let m=0; m<verticalLineKeyPoints.length;m++){
-            polyline.push([verticalLineKeyPoints[m].verticalXs[n], verticalLineKeyPoints[m].y]);
-          }
-
-          //draw polylines
-          drawPolyline(svgOutput,polyline,"none","pink",1);
-
-
-        }
-  
-
-
-
-
-  
-        //do exact same thing for x parallels
-        let horizontalLineKeyPoints = [];
-        for(let x = 0; x <= canvasWidth; x+=parallelScanSamplingDistance){
-          let intersections = findPolygonLineXIntersections(vertices, x);
-  
-          if(intersections.length%2!=0){
-            console.log('Intersections are not in pairs. Might generate error.');
-          }
-          if(intersections.length == 0){
-            continue;//no intersection. don't draw. 
-          }
-  
-          //identify the two pairs on both edges of it
-          let minY = canvasHeight;
-          let maxY = 0;
-      
-          for (const point of intersections) {
-              if (point[1] < minY) minY = point[1];
-              if (point[1] > maxY) maxY = point[1];
-          }
-          // now minY and maxY are found
-          //next, evenly divide the segment by vertical lines
-          let horizontalYs = [];
-          let dy = (maxY-minY)/(numOfHorizontalLines+1);
-          for(let i = 1; i <= numOfHorizontalLines; i++){
-            let yi = minY + i*dy;
-            horizontalYs.push(yi);
-          }
-          horizontalLineKeyPoints.push({x: x,horizontalYs: horizontalYs});
-          
-        }
-  
-        //formula for (n+1)th vertical curve:
-        //[verticalLineKeyPoints[m].verticalXs[n], verticalLineKeyPoints[m].y], where m = [0 : verticalLineKeyPoints.length-1]
-  
-        for(let n=0; n<numOfHorizontalLines; n++){
-          let polyline = []
-          for(let m=0; m<horizontalLineKeyPoints.length;m++){
-            polyline.push([horizontalLineKeyPoints[m].x, horizontalLineKeyPoints[m].horizontalYs[n]]);
-          }
-
-          //draw polylines
-          drawPolyline(svgOutput,polyline,"none","cyan",1);
-        }
-      }
-    
-    );
+        //shape defined
 
 
 
 
       console.log("Shapes:", shapes);
       console.log("SensorAreas:", sensorAreas);
+
+      userFlowState = UserFlowState.WAITING_FOR_LINE_A_POINT_A;
+      instruction.innerHTML = "Please select the starting point of the entry scan line on the contour";
+      
+      })
+      reader.readAsText(file);
     };
-    reader.readAsText(file);
+}});
+
+//mouse moved handler
+
+function distanceToSegment(px, py, x1, y1, x2, y2) {
+  // Vector AB
+  const dx1 = x2 - x1;
+  const dy1 = y2 - y1;
+
+  // Vector AP
+  const dx2 = px - x1;
+  const dy2 = py - y1;
+
+  // Dot products
+  const dotProduct = dx2 * dx1 + dy2 * dy1;
+  const lengthSquared = dx1 * dx1 + dy1 * dy1;
+
+  // Projection scalar t
+  const t = dotProduct / lengthSquared;
+
+  let closestX, closestY;
+
+  // Closest point on the segment
+  if (t < 0) {
+      closestX = x1;
+      closestY = y1;
+  } else if (t > 1) {
+      closestX = x2;
+      closestY = y2;
+  } else {
+      closestX = x1 + t * dx1;
+      closestY = y1 + t * dy1;
   }
-});
+
+  // Compute the distance from the point to the closest point on the segment
+  const distX = px - closestX;
+  const distY = py - closestY;
+
+  return Math.sqrt(distX * distX + distY * distY);
+}
+
+function closestPointOnSegment(px, py, x1, y1, x2, y2) {
+  // Vector AB
+  const dx1 = x2 - x1;
+  const dy1 = y2 - y1;
+
+  // Vector AP
+  const dx2 = px - x1;
+  const dy2 = py - y1;
+
+  // Dot products
+  const dotProduct = dx2 * dx1 + dy2 * dy1;
+  const lengthSquared = dx1 * dx1 + dy1 * dy1;
+
+  // Projection scalar t
+  const t = dotProduct / lengthSquared;
+
+  let closestX, closestY;
+
+  // Closest point on the segment
+  if (t < 0) {
+      closestX = x1;
+      closestY = y1;
+  } else if (t > 1) {
+      closestX = x2;
+      closestY = y2;
+  } else {
+      closestX = x1 + t * dx1;
+      closestY = y1 + t * dy1;
+  }
+
+  return [closestX,closestY];
+}
+
 
 // 使用 svg-path-properties 将路径采样为顶点
 function samplePathVertices(d, sampleCount = 100) {

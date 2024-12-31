@@ -28,6 +28,8 @@ class Shape {
     // 添加到 SVG
     svg.appendChild(pathElement);
   }
+
+
 }
 
 // 定义 sensorArea 类 (继承自 Shape)
@@ -64,7 +66,27 @@ class SensorArea extends Shape {
     // 添加到 SVG
     svg.appendChild(polygon);
   }
+
+  drawPolyline(svg) {
+    const polyline = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "polyline"
+    );
+  
+    // 设置顶点
+    polyline.setAttribute("points", this.vertices.map(([x, y]) => `${x},${y}`).join(" "));
+  
+    // 设置样式
+    polyline.setAttribute("fill", fill);
+    polyline.setAttribute("stroke", stroke);
+    polyline.setAttribute("stroke-width", strokeWidth);
+  
+    // 添加到 SVG
+    svg.appendChild(polyline);
+  }
 }
+
+
 
 const shapes = []; // 存储 Shape 实例
 const sensorAreas = []; // 存储 SensorArea 实例
