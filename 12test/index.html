@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <script src="global.js"></script>
+  <script src="drawing.js"></script>
   <script src="geometry.js"></script>
   <script src="events.js"></script>
+  <script src="process.js"></script>
+
 
   <head>
     <meta charset="UTF-8" />
@@ -12,12 +15,14 @@
   <body>
     <h1 id="instruction">Upload SVG File</h1>
     <input type="file" id="fileInput" accept=".svg" />
+    <button id="executeButton" type = "button" disabled onclick="execute()">Execute</button>
     <svg
       id="output"
       width="1600"
       height="1200"
       style="border: 1px solid black"
       onmousemove="mouseMoved(event)"
+      onclick="mouseClicked(event)"
     ></svg>
     <script src="shapeclass.js"></script>
     <script type="module" src="vertices.js"></script> 

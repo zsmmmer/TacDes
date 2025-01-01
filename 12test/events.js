@@ -1,3 +1,4 @@
+let selectedPoint = null;
 function mouseMoved(event){
     
     if(userFlowState==UserFlowState.WAITING_FOR_UPLOAD){
@@ -19,7 +20,7 @@ function mouseMoved(event){
   
     //determine if it is near contour, if so where? 
     let shortestDistance = selectionTriggerDistance;
-    let selectedPoint = null;
+    selectedPoint = null;
     for (let i = 0; i < vertices.length; i++) {
       // Get the current and next vertex
       const [x1, y1] = vertices[i];
@@ -42,16 +43,72 @@ function mouseMoved(event){
   
     }
    //check if there is any selection
+   const circle = svgOutput.getElementById("selectedPoint")
    if(selectedPoint){
       //draw the point as circle
-      const circle = svgOutput.getElementById("selectedPoint")
+      
       console.log(`circle: ${circle}`);
       circle.setAttribute("cx",`${selectedPoint[0]}`);
       circle.setAttribute("cy",`${selectedPoint[1]}`);
-      circle.setAttribute("fill", "red")
+      circle.setAttribute("fill", "red") 
   
-  
+   } else {
+      circle.setAttribute("fill","none");
    }
   
   
+  }
+
+  function mouseClicked(event){
+    if(selectedPoint){
+        //store the point selected
+        switch(userFlowState){
+            case UserFlowState.WAITING_FOR_UPLOAD:
+                break;
+            case UserFlowState.WAITING_FOR_LINE_A_POINT_A:
+                lineAPointA = selectedPoint;
+                //update render
+                drawPoint(lineAPointA,"lineAPointA");
+                userFlowState = UserFlowState.WAITING_FOR_LINE_A_POINT_B;
+                //update instruction
+                document.getElementById("instruction").innerHTML = "Please select the ending point of the entry scan line on the contour";
+                break;
+
+            case UserFlowState.WAITING_FOR_LINE_A_POINT_B:
+                lineAPointB = selectedPoint;
+                drawPoint(lineAPointB,"lineAPointB");
+                //draw a line as well
+                drawLine(lineAPointA,lineAPointB,"lineA");
+                userFlowState = UserFlowState.WAITING_FOR_LINE_B_POINT_A;
+                document.getElementById("instruction").innerHTML = "Please select the starting point of the exit scan line on the contour";
+                break;
+            // case UserFlowState.WAITING_FOR_LINE_B_POINT_A:
+            //     lineBPointA = selectedPoint;
+            case UserFlowState.WAITING_FOR_LINE_B_POINT_A:
+                lineBPointA = selectedPoint;
+                //update render
+                drawPoint(lineBPointA,"lineBPointA");
+                userFlowState = UserFlowState.WAITING_FOR_LINE_B_POINT_B;
+                //update instruction
+                document.getElementById("instruction").innerHTML = "Please select the ending point of the exit scan line on the contour";
+                break;
+
+            case UserFlowState.WAITING_FOR_LINE_B_POINT_B:
+                lineBPointB = selectedPoint;
+                drawPoint(lineBPointB,"lineBPointB");
+                //draw a line as well
+                drawLine(lineBPointA,lineBPointB,"lineB");
+                userFlowState = UserFlowState.WAITING_FOR_EXE;
+                //enable button
+                document.getElementById("executeButton").disabled = false;
+                document.getElementById("instruction").innerHTML = "Ready to execute";
+                break;
+                
+
+
+            default:
+                break;
+
+        }
+    }
   }

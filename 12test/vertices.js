@@ -103,43 +103,7 @@ function samplePathVertices(d, sampleCount = 100) {
   }
 }
 
-// 绘制多边形
-function drawPolygon(svg, vertices, fill, stroke, strokeWidth) {
-  const polygon = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "polygon"
-  );
 
-  // 设置顶点
-  const points = vertices.map(([x, y]) => `${x},${y}`).join(" ");
-  polygon.setAttribute("points", points);
-
-  // 设置样式
-  polygon.setAttribute("fill", fill);
-  polygon.setAttribute("stroke", stroke);
-  polygon.setAttribute("stroke-width", strokeWidth);
-
-  // 添加到 SVG
-  svg.appendChild(polygon);
-}
-
-function drawPolyline(svg, points, fill, stroke, strokeWidth) {
-  const polyline = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "polyline"
-  );
-
-  // 设置顶点
-  polyline.setAttribute("points", points.map(([x, y]) => `${x},${y}`).join(" "));
-
-  // 设置样式
-  polyline.setAttribute("fill", fill);
-  polyline.setAttribute("stroke", stroke);
-  polyline.setAttribute("stroke-width", strokeWidth);
-
-  // 添加到 SVG
-  svg.appendChild(polyline);
-}
 
 
 function findPolygonLineYIntersections(polygon, lineY) {//for hosrizontal line intersections

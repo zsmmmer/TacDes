@@ -5,6 +5,8 @@ const canvasHeight = 1200;
 const parallelScanSamplingDistance = 10;
 const numOfVerticalLines = 10;
 const numOfHorizontalLines = 10;
+const samplingDistance = 10;//general value
+const numOfLines = 10;
 let vertices;
 let svgOutput;
 
@@ -19,6 +21,11 @@ const UserFlowState = {
 }
 
 const selectionTriggerDistance = 10;
+
+let lineAPointA = null;
+let lineAPointB = null;
+let lineBPointA = null;
+let lineBPointB = null;
 
 // 监听文件上传
 
