@@ -50,25 +50,27 @@ function execute(){
             }
       
         }
-
+        console.log(`Line ${n} intersections: ${contourScanSegments[n-1]}`);
         //check if on same sides
-        // if(n>1){
-        //     const s0 = contourScanSegments[n-2];
-        //     const s1 = contourScanSegments[n-1];
-        //     if(findSegmentSegmentIntersection(s0[0][0],s0[0][1], s1[0][0],s1[0][1] ,s0[1][0],s0[1][1],s1[1][0],s1[1][1])){
-        //         //swap contents in s1
-        //         //s1s = s1[0];
-        //         contourScanSegments[n-1][0]=s1[1];
-        //         contourScanSegments[n-1][1]=s1[0];
+        if(n>1){
+            const s0 = contourScanSegments[n-2];
+            const s1 = contourScanSegments[n-1];
+            if(findSegmentSegmentIntersection(s0[0][0],s0[0][1], s1[0][0],s1[0][1] ,s0[1][0],s0[1][1],s1[1][0],s1[1][1])){
+                //swap contents in s1
+                s1s = s1[0];
+                console.log(`intersection found at line ${n}`);
+                contourScanSegments[n-1][0]=s1[1];
+                contourScanSegments[n-1][1]=s1s;
+                console.log(`New intersections: ${contourScanSegments[n-1]}`);
                 
 
-        //     }
+            }
 
 
-        // }
+    `` }
        
 
-        //drawLine(contourScanSegments[n-1][0],contourScanSegments[n-1][1],`${n}thScanLine`)
+        drawLine(contourScanSegments[n-1][0],contourScanSegments[n-1][1],`${n}thScanLine`)
     }
     //draw lines based on contour scan scan segments for testing
 
