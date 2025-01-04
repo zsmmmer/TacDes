@@ -8,12 +8,16 @@
   <body>
     <h1>Upload SVG File</h1>
     <input type="file" id="fileInput" accept=".svg" />
-    <svg
-      id="output"
-      width="800"
-      height="600"
-      style="border: 1px solid black"
-    ></svg>
+    <button id="convert">convert</button>
+    <button id="generate">gennerate</button>
+    <svg id="output" width="800" height="600" style="border: 1px solid black">
+      <!--shape-->
+      <g id="shape-layer"></g>
+      <!--sensor-->
+      <g id="sensor-layer"></g>
+      <!-- connector -->
+      <g id="connector-layer"></g>
+    </svg>
     <script src="shapeclass.js"></script>
     <script type="module" src="vertices.js"></script>
   </body>

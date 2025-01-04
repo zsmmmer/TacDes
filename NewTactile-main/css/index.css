@@ -1,0 +1,29 @@
+.app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #f1f7fc;
+  box-shadow: 4px 4px 30.5px 0px rgba(0, 0, 0, 0.05);
+}
+
+.app-container button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.canvas svg {
+  position: absolute;
+  width: 900px;
+  height: 690px;
+  background-color: rgba(255, 255, 255);
+  margin-top: 180px;
+  margin-left: 350px;
+  z-index: 0;
+}

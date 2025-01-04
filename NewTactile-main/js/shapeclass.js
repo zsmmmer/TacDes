@@ -95,25 +95,25 @@ class SensorArea extends Shape {
     };
   }
 
-  // // 绘制最小包围矩形的方法
-  // drawBoundingBox(svg) {
-  //   const boundingBox = this.generateBoundingBox();
-  //   if (!boundingBox) return;
+  // 绘制最小包围矩形的方法
+  drawBoundingBox(svg) {
+    const boundingBox = this.generateBoundingBox();
+    if (!boundingBox) return;
 
-  //   const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-  //   rect.setAttribute("x", boundingBox.x);
-  //   rect.setAttribute("y", boundingBox.y);
-  //   rect.setAttribute("width", boundingBox.width);
-  //   rect.setAttribute("height", boundingBox.height);
-  //   rect.setAttribute("fill", "none");
-  //   rect.setAttribute("stroke", "red");
-  //   rect.setAttribute("stroke-width", 1);
+    const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    rect.setAttribute("x", boundingBox.x);
+    rect.setAttribute("y", boundingBox.y);
+    rect.setAttribute("width", boundingBox.width);
+    rect.setAttribute("height", boundingBox.height);
+    rect.setAttribute("fill", "none");
+    rect.setAttribute("stroke", "red");
+    rect.setAttribute("stroke-width", 1);
 
-  //   // 添加到 SVG
-  //   svg.appendChild(rect);
-  // }
+    // 添加到 SVG
+    svg.appendChild(rect);
+  }
 
-  // 绘制裁剪后的网格
+  绘制裁剪后的网格;
   drawBoundingGrid(svg, xnum, ynum) {
     const sensorLayer = svg.querySelector("#sensor-layer");
     if (!sensorLayer) return;

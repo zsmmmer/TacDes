@@ -1,0 +1,76 @@
+.header {
+  display: flex;
+  align-items: center;
+  font-family: "Inria Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  height: 4vh;
+  color: var(--text-normal, rgba(9, 16, 33, 0.6));
+}
+
+.logo-and-title {
+  display: flex;
+  align-items: center;
+  padding-left: 40px;
+  padding-top: 10px;
+  gap: 15px;
+}
+
+.header .logoimg {
+  width: 45px;
+  height: 35px;
+  flex-shrink: 0;
+}
+
+.header h1 {
+  color: var(--text-emphasise, rgba(9, 16, 33, 0.8));
+  font-family: "Inria Sans", sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 0;
+}
+
+.header .centerbox {
+  display: inline-flex;
+  align-items: center;
+  position: absolute;
+  top: 20px;
+  left: 480px;
+}
+
+.header .rightbox {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  position: absolute;
+  top: 20px;
+  right: 40px;
+}
+
+.header .unit {
+  align-items: center;
+  gap: 0px;
+  margin-right: 10px;
+}
+.header .unit input {
+  width: 40px;
+}
+
+.header .topimg {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+.header .toptxt {
+  padding-right: 15px;
+  border-right: 0.5px solid rgba(9, 16, 33, 0.6);
+}
+
+.header .toptxtend {
+  padding-right: 15px;
+}

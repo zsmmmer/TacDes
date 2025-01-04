@@ -1,58 +1,5 @@
 import { svgPathProperties } from "./node_modules/svg-path-properties/dist/svg-path-properties.esm.js";
 const svgOutput = document.getElementById("output");
-// // 监听文件上传
-// document.getElementById("fileInput").addEventListener("change", (event) => {
-//   const file = event.target.files[0];
-//   if (file) {
-//     const reader = new FileReader();
-//     reader.onload = () => {
-//       const parser = new DOMParser();
-//       const svgDoc = parser.parseFromString(reader.result, "image/svg+xml");
-
-//       const paths = svgDoc.querySelectorAll("path");
-//       const svgOutput = document.getElementById("output");
-
-//       paths.forEach((path, index) => {
-//         const id = `shape-${index}`;
-//         const d = path.getAttribute("d");
-//         const fill = path.getAttribute("fill") || "none";
-//         const stroke = path.getAttribute("stroke") || "black";
-//         const strokeWidth = parseFloat(path.getAttribute("stroke-width")) || 1;
-
-//         console.log(`Processing path ID: ${id}, d: ${d}`);
-
-//         // 创建 Shape 实例并存储到全局数组
-//         const shape = new Shape(id, d, fill, stroke, strokeWidth);
-//         shapes.push(shape);
-//         shape.drawPath(svgOutput);
-
-//         // 生成顶点并创建 SensorArea 实例
-//         const vertices = samplePathVertices(d, 20); // 采样 20 个点
-//         const sensorArea = new SensorArea(
-//           id,
-//           d,
-//           fill,
-//           stroke,
-//           strokeWidth,
-//           vertices,
-//           "polygon"
-//         );
-//         sensorAreas.push(sensorArea);
-
-//         console.log(`Generated vertices for path ID ${id}:`, vertices);
-
-//         // 绘制多边形
-//         // sensorArea.drawPolygon(svgOutput);
-//         // 绘制最小包围矩形
-//         sensorArea.drawBoundingGrid(svgOutput);
-//       });
-
-//       console.log("Shapes:", shapes);
-//       console.log("SensorAreas:", sensorAreas);
-//     };
-//     reader.readAsText(file);
-//   }
-// });
 
 // 监听文件上传
 document.getElementById("fileInput").addEventListener("change", (event) => {
@@ -106,7 +53,7 @@ document.getElementById("output").addEventListener("click", (event) => {
 });
 
 // 添加 convert 按钮的事件监听器
-document.getElementById("convert").addEventListener("click", () => {
+document.getElementById("convertToSensor").addEventListener("click", () => {
   // 获取所有被选中的路径
   const selectedPaths = document.querySelectorAll("path[selected='true']");
 
@@ -154,6 +101,7 @@ document.getElementById("generate").addEventListener("click", () => {
     // sensorArea.drawBoundingBox(sensorLayer);
     sensorArea.drawBoundingGrid(svgOutput, xnum, ynum);
   });
+
   console.log("Generated bounding boxes and grids for all SensorAreas.");
 });
 
@@ -195,3 +143,31 @@ function drawPolygon(svg, vertices, fill, stroke, strokeWidth) {
   // 添加到 SVG
   svg.appendChild(polygon);
 }
+
+document.getElementById("download").addEventListener("click", () => {
+  // 获取画布上的所有 SVG 内容
+  if (!svgOutput) {
+    console.error("SVG output element not found.");
+    return;
+  }
+
+  // 创建一个克隆，以确保导出内容一致
+  const svgClone = svgOutput.cloneNode(true);
+
+  // 添加命名空间（部分浏览器需要此步骤）
+  svgClone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+
+  // 获取 SVG 的外部 HTML
+  const svgContent = svgClone.outerHTML;
+
+  // 创建 Blob 对象
+  const blob = new Blob([svgContent], { type: "image/svg+xml" });
+
+  // 创建下载链接
+  const downloadLink = document.createElement("a");
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = "canvas_output.svg"; // 下载文件名
+  downloadLink.click();
+
+  console.log("SVG exported and downloaded.");
+});
