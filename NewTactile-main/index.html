@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+  <script src="js/global.js"></script>
+  <script src="js/drawing.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/geometry.js"></script>
+  <script src="js/process.js"></script>
   <head>
     <meta charset="utf-8" />
     <title>Tactile Editor</title>
@@ -76,7 +81,7 @@
 
       <main>
         <!-- Canvas -->
-        <div class="canvas">
+        <div class="canvas" id = "canvas">
           <svg id="output" xmlns="http://www.w3.org/2000/svg" width="500" height="500">
             <!--shape-->
             <g id="shape-layer">
@@ -163,30 +168,27 @@
             </div>
             
             <div class="parameter">
-              <div class="twoblock">
+              <div class="oneblock">
                 <div class="parabox">
-                  <span>X num</span>
-                  <input type="number" id="xnum" placeholder="20" min="1" />
-                </div>
-                <div class="parabox">
-                  <span>Y num</span>
-                  <input type="number" id="ynum" placeholder="20" min="1" />
+                  <span>sampling distance</span>
+                  <input type="number" id="samplingDistance" placeholder="10" min="1" />
                 </div>
               </div>
               <div class="oneblock">
                 <div class="parabox">
-                  <span>Sensor</span>
-                  <span>576</span>
+                  <span>number of lines</span>
+                  <input type="number" id="numOfLines" placeholder="10" min="1" />
                 </div>
               </div>
               <div class="twoblock">
-                <div class="parabox">
-                  <span>Min Dis</span>
-                  <span>1.75</span>
-                </div>
-                <button id="generate">generate</button>
+                <button id="placeScanGuides">place scan guides</button>
+                <button id="generate" disabled>generate</button>
               </div>
               
+            </div>
+
+            <div class="title">
+              <h1 id="instruction">Instruction</h1>
             </div>
 
           </div>

@@ -1,5 +1,8 @@
 import { svgPathProperties } from "./node_modules/svg-path-properties/dist/svg-path-properties.esm.js";
-const svgOutput = document.getElementById("output");
+
+
+
+svgOutput = document.getElementById("output");
 
 // 监听文件上传
 document.getElementById("fileInput").addEventListener("change", (event) => {
@@ -69,7 +72,7 @@ document.getElementById("convertToSensor").addEventListener("click", () => {
     clickedPath.remove();
 
     // 生成顶点并创建 SensorArea 实例
-    const vertices = samplePathVertices(d, 20); // 采样 20 个点
+    vertices = samplePathVertices(d, 20); // 采样 20 个点
     const sensorArea = new SensorArea(
       id,
       d,
@@ -86,23 +89,46 @@ document.getElementById("convertToSensor").addEventListener("click", () => {
   });
 });
 
+
+
+document.getElementById("placeScanGuides").addEventListener("click", () => {
+
+  userFlowState = UserFlowState.WAITING_FOR_LINE_A_POINT_A;
+  document.getElementById("instruction").innerHTML = "Please select the starting point of the entry scan line on the contour";
+
+  //enter line guidance modes
+  document.getElementById("output").addEventListener("mousemove", mouseMoved);
+  //svgOutput.addEventListener("mousemove", mouseMoved());
+  document.getElementById("output").addEventListener("click", mouseClicked);
+  //svgOutput.addEventListener("click", mouseClicked());
+
+  const circle = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "circle"
+  );
+  circle.setAttribute("id","selectedPoint")
+  circle.setAttribute("r","5");    
+  circle.setAttribute("cx","0");
+  circle.setAttribute("cy","0");
+  circle.setAttribute("fill", "none");
+  svgOutput.appendChild(circle);
+
+  console.log("entering scan guide placing mode");
+
+
+});
+
 // 监听 generate 按钮生成网格
 document.getElementById("generate").addEventListener("click", () => {
   // 获取用户输入的 xnum 和 ynum
-  const xnumInput = document.getElementById("xnum").value; // 假设有 id="xnum" 的 input
-  const ynumInput = document.getElementById("ynum").value; // 假设有 id="ynum" 的 input
+  const samplingDistanceInput = document.getElementById("samplingDistance").value; // 假设有 id="xnum" 的 input
+  const numOfLinesInput = document.getElementById("numOfLines").value; // 假设有 id="ynum" 的 input
 
   // 转换为整数
-  const xnum = parseInt(xnumInput, 10) || 20; // 如果输入无效，默认值为 20
-  const ynum = parseInt(ynumInput, 10) || 20; // 如果输入无效，默认值为 20
+  samplingDistance = parseInt(samplingDistanceInput, 10) || 20; // 如果输入无效，默认值为 20
+  numOfLines = parseInt(numOfLinesInput, 10) || 20; // 如果输入无效，默认值为 20
 
-  sensorAreas.forEach((sensorArea) => {
-    // 绘制最小包围矩形和网格
-    // sensorArea.drawBoundingBox(sensorLayer);
-    sensorArea.drawBoundingGrid(svgOutput, xnum, ynum);
-  });
-
-  console.log("Generated bounding boxes and grids for all SensorAreas.");
+  execute();
 });
 
 // 使用 svg-path-properties 将路径采样为顶点
