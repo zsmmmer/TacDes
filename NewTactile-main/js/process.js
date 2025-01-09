@@ -1,6 +1,6 @@
 function execute(){
-    const canvasWidth = document.getElementById("output").width;
-    const canvasHeight = document.getElementById("output").height;
+    const canvasWidth = document.getElementById("output").clientWidth;
+    const canvasHeight = document.getElementById("output").clientHeight;
 
 
     //both line are initialized

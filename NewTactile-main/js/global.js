@@ -27,3 +27,6 @@ let selectedPoint = null;
 
 let samplingDistance;
 let numOfLines;
+
+// let canvasWidth;// = document.getElementById("output").width;
+// let canvasHeight;// = document.getElementById("output").height;
