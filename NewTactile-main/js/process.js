@@ -29,17 +29,28 @@ function execute(){
     let startpointIndex = 0; 
     let endpointIndex = 1;
     let finalScanSegments = [];//keeping only start and end points
-    for(let n = 1; n <= sampleNum; n++){
+
+    contourScanSegments.push([[ax1, ay1],[ax2, ay2]]);//the entry line
+
+    for(let n = 0; n <= sampleNum +1; n++){
         const i = n*samplingDistance/md;
         //const s = interpolateSegments([lineAPointA,lineAPointB],[lineBPointA,lineBPointB],i);// overkill in this case
 
         //line a p a to line b p a
-        const pax = (1 - i) * lineAPointA[0] + i * lineBPointA[0];
-        const pay = (1 - i) * lineAPointA[1] + i * lineBPointA[1];
+        let pax = (1 - i) * lineAPointA[0] + i * lineBPointA[0];
+        let pay = (1 - i) * lineAPointA[1] + i * lineBPointA[1];
 
         //line a p b to line b p b
-        const pbx = (1 - i) * lineAPointB[0] + i * lineBPointB[0];
-        const pby = (1 - i) * lineAPointB[1] + i * lineBPointB[1];
+        let pbx = (1 - i) * lineAPointB[0] + i * lineBPointB[0];
+        let pby = (1 - i) * lineAPointB[1] + i * lineBPointB[1];
+
+        if(n==sampleNum +1){//special case: last line is equal to exiting line
+            pax = lineBPointA[0];
+            pay = lineBPointA[1];
+            pbx = lineBPointB[0];
+            pby = lineBPointB[1];
+
+        }
 
         //segment ready
         // const lx1 = s[0][0];
@@ -56,16 +67,16 @@ function execute(){
             const intersection = findLineSegmentIntersection(pax, pay, pbx, pby, sx1, sy1, sx2, sy2);
 
             if(intersection){
-                contourScanSegments[n-1].push(intersection);
+                contourScanSegments[n].push(intersection);
             }
       
         }
         console.log(`Line ${n} intersections: ${contourScanSegments[n-1]}`);
         //check if on same sides
-        if(n>1){
+        if(n>0){
 
-            const s0 = contourScanSegments[n-2];
-            const s1 = contourScanSegments[n-1];
+            const s0 = contourScanSegments[n-1];
+            const s1 = contourScanSegments[n-0];
 
 
             let maxx = 0;
@@ -91,9 +102,9 @@ function execute(){
                 //swap contents in s1
                 s1s = s1[startpointIndex];
                 console.log(`intersection found at line ${n}`);
-                contourScanSegments[n-1][startpointIndex]=s1[endpointIndex];
-                contourScanSegments[n-1][endpointIndex]=s1s;
-                console.log(`New intersections: ${contourScanSegments[n-1][startpointIndex]},${contourScanSegments[n-1][endpointIndex]}`);
+                contourScanSegments[n][startpointIndex]=s1[endpointIndex];
+                contourScanSegments[n][endpointIndex]=s1s;
+                console.log(`New intersections: ${contourScanSegments[n][startpointIndex]},${contourScanSegments[n][endpointIndex]}`);
                 
 
             }
@@ -101,12 +112,13 @@ function execute(){
 
     `` }
        
-        finalScanSegments.push([contourScanSegments[n-1][startpointIndex],contourScanSegments[n-1][endpointIndex]]);
-        drawLine(contourScanSegments[n-1][startpointIndex],contourScanSegments[n-1][endpointIndex],`${n}thScanLine`);
+        finalScanSegments.push([contourScanSegments[n][startpointIndex],contourScanSegments[n][endpointIndex]]);
+        //drawLine(contourScanSegments[n-1][startpointIndex],contourScanSegments[n-1][endpointIndex],`${n}thScanLine`);
         lastStartpointIndex = startpointIndex;
         lastEndpointIndex = endpointIndex;
     }
     //draw lines based on contour scan scan segments for testing
+
 
     //replace contourScan Segments with 
 
