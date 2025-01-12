@@ -126,6 +126,8 @@ function execute(){
     for(let lineNum = 1; lineNum <= numOfLines; lineNum++){
         const linePos = lineNum/(numOfLines+1);
         let ks = keypoints(finalScanSegments, linePos);
+        //to insert head and tail
+
         drawPolyline(svgOutput, ks, "none", "pink", 1);
     }
 
@@ -134,6 +136,19 @@ function execute(){
 function keypoints(contourScanSegments, linePos){
     //return array of keypoints the length of scane segment at linepos(between 0 and 1)
     let result = [];
+    for (let m = 0; m < vertices.length; m++) {
+        // Get the current and next vertex
+        const [sx1, sy1] = vertices[m];
+        const [sx2, sy2] = vertices[(m + 1) % vertices.length]; // Wrap around to the first vertex
+
+        const intersection = findPointLineSegmentIntersection()
+
+        if(intersection){
+            contourScanSegments[n].push(intersection);
+        }
+  
+    }
+
     for(let n = 0; n < contourScanSegments.length; n++){
         if(contourScanSegments[n].length<2){
             continue;
@@ -145,7 +160,54 @@ function keypoints(contourScanSegments, linePos){
 
         const pix = (1 - linePos) * pax + linePos * pbx;
         const piy = (1 - linePos) * pay + linePos * pby;
+        if(n==0){
+            const verticalK = -(pbx-pax)/(pby-pay);//the slope vertical
+            for (let m = 0; m < vertices.length; m++) {
+                // Get the current and next vertex
+                const [sx1, sy1] = vertices[m];
+                const [sx2, sy2] = vertices[(m + 1) % vertices.length]; // Wrap around to the first vertex
+    
+                const head = findPointLineSegmentIntersection(pix,piy,verticalK,sx1, sy1, sx2, sy2)
+    
+                if(head){
+                    //determine if line B is further than line A
+                    // const closestPointOnLineA = closestPointOnSegment(head[0],head[1],lineAPointA[0],lineAPointA[1],lineAPointB[0],lineAPointB[1]);
+                    // const closestPointOnLineB = closestPointOnSegment(head[0],head[1],lineBPointA[0],lineBPointA[1],lineBPointB[0],lineBPointB[1]);
+                    // closestPointOnLineA[0]-head[0]
+                    const distanceToLineA = distanceToSegment(head[0],head[1],lineAPointA[0],lineAPointA[1],lineAPointB[0],lineAPointB[1]);
+                    const distanceToLineB = distanceToSegment(head[0],head[1],lineBPointA[0],lineBPointA[1],lineBPointB[0],lineBPointB[1]);
+                    if(distanceToLineB>distanceToLineA){
+                        result.push(head);
+                        break;
+                    }
+                }
+          
+            }
+            
+        }
         result.push([pix,piy]);
+        if(n==contourScanSegments.length-1){
+            const verticalK = -(pbx-pax)/(pby-pay);//the slope vertical
+            for (let m = 0; m < vertices.length; m++) {
+                // Get the current and next vertex
+                const [sx1, sy1] = vertices[m];
+                const [sx2, sy2] = vertices[(m + 1) % vertices.length]; // Wrap around to the first vertex
+    
+                const tail = findPointLineSegmentIntersection(pix,piy,verticalK,sx1, sy1, sx2, sy2)
+    
+                if(tail){
+                    const distanceToLineA = distanceToSegment(tail[0],tail[1],lineAPointA[0],lineAPointA[1],lineAPointB[0],lineAPointB[1]);
+                    const distanceToLineB = distanceToSegment(tail[0],tail[1],lineBPointA[0],lineBPointA[1],lineBPointB[0],lineBPointB[1]);
+                    if(distanceToLineA>distanceToLineB){
+                        result.push(tail);
+                        break;
+                    }
+                }
+          
+            }
+            
+        }
+
     }
     return result;
 }

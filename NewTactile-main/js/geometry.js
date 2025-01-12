@@ -135,6 +135,50 @@ function findLineSegmentIntersection(lx1, ly1, lx2, ly2, sx1, sy1, sx2, sy2) {
     return [xIntersection, yIntersection];
 }
 
+function findPointLineSegmentIntersection(lx, ly, lk, s1x, s1y, s2x, s2y) {
+    // Line equation: y = lk * (x - lx) + ly
+    // Segment equation: from (s1x, s1y) to (s2x, s2y)
+
+    // Calculate slope and intercept of the segment
+    const segmentSlope = (s2y - s1y) / (s2x - s1x);
+    const segmentIntercept = s1y - segmentSlope * s1x;
+
+    // Handle vertical lines (undefined slope)
+    const lineIsVertical = !isFinite(lk);
+    const segmentIsVertical = !isFinite(segmentSlope);
+
+    let ix, iy;
+
+    if (lineIsVertical) {
+        // Line is vertical: x = lx
+        ix = lx;
+        iy = segmentSlope * ix + segmentIntercept;
+    } else if (segmentIsVertical) {
+        // Segment is vertical: x = s1x
+        ix = s1x;
+        iy = lk * (ix - lx) + ly;
+    } else {
+        // General case: solve for intersection of y = lk * (x - lx) + ly and y = segmentSlope * x + segmentIntercept
+        if (lk === segmentSlope) {
+            // Parallel lines
+            return null;
+        }
+
+        ix = (segmentIntercept - ly + lk * lx) / (lk - segmentSlope);
+        iy = lk * (ix - lx) + ly;
+    }
+
+    // Check if the intersection point lies on the segment
+    const isOnSegment = (ix >= Math.min(s1x, s2x) && ix <= Math.max(s1x, s2x)) &&
+                        (iy >= Math.min(s1y, s2y) && iy <= Math.max(s1y, s2y));
+
+    if (!isOnSegment) {
+        return null;
+    }
+
+    return [ix, iy];
+}
+
 function findSegmentSegmentIntersection(lx1, ly1, lx2, ly2, sx1, sy1, sx2, sy2) {
     // Calculate the slope of the straight line and the segment
     const kLine = (ly2 - ly1) / (lx2 - lx1);
