@@ -148,7 +148,8 @@ function keypoints(contourScanSegments, linePos){
         }
   
     }
-
+    const endPoints = [];
+    sensorArea.wireEndpoints.push(endPoints);
     for(let n = 0; n < contourScanSegments.length; n++){
         if(contourScanSegments[n].length<2){
             continue;
@@ -160,6 +161,9 @@ function keypoints(contourScanSegments, linePos){
 
         const pix = (1 - linePos) * pax + linePos * pbx;
         const piy = (1 - linePos) * pay + linePos * pby;
+
+        
+
         if(n==0){
             const verticalK = -(pbx-pax)/(pby-pay);//the slope vertical
             for (let m = 0; m < vertices.length; m++) {
@@ -178,6 +182,7 @@ function keypoints(contourScanSegments, linePos){
                     const distanceToLineB = distanceToSegment(head[0],head[1],lineBPointA[0],lineBPointA[1],lineBPointB[0],lineBPointB[1]);
                     if(distanceToLineB>distanceToLineA){
                         result.push(head);
+                        endPoints.push(head);
                         break;
                     }
                 }
@@ -200,6 +205,7 @@ function keypoints(contourScanSegments, linePos){
                     const distanceToLineB = distanceToSegment(tail[0],tail[1],lineBPointA[0],lineBPointA[1],lineBPointB[0],lineBPointB[1]);
                     if(distanceToLineA>distanceToLineB){
                         result.push(tail);
+                        endPoints.push(tail);
                         break;
                     }
                 }

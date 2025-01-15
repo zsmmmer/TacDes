@@ -1,4 +1,5 @@
 let vertices;
+let sensorArea;
 let svgOutput;
 
 //UI State definitions

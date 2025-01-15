@@ -72,8 +72,8 @@ document.getElementById("convertToSensor").addEventListener("click", () => {
     clickedPath.remove();
 
     // 生成顶点并创建 SensorArea 实例
-    vertices = samplePathVertices(d, 20); // 采样 20 个点
-    const sensorArea = new SensorArea(
+    vertices = samplePathVertices(d, 100); // 采样 20 个点
+    sensorArea = new SensorArea(
       id,
       d,
       fill,
