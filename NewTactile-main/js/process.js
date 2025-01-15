@@ -131,6 +131,9 @@ function execute(){
         drawPolyline(svgOutput, ks, "none", "pink", 1);
     }
 
+    cyclesExecuted++;
+    userFlowState = UserFlowState.WAITING_FOR_GUIDE;
+
 }
 
 function keypoints(contourScanSegments, linePos){

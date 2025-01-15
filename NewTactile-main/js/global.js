@@ -12,6 +12,8 @@ const UserFlowState = {
   WAITING_FOR_EXE : "exe"
 }
 
+let cyclesExecuted = 0;
+
 const selectionTriggerDistance = 10;
 
 let lineAPointA = null;
