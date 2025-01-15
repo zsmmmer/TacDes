@@ -123,6 +123,13 @@ function execute(){
     //replace contourScan Segments with 
 
     //each poly line: find all of its keypoints, each from one scannned line. 
+    currentLayer = {start:[], end:[]};//create new layer
+    if(cyclesExecuted%2==0){
+        sensorArea.intersectionPoints.firstLayer = currentLayer;
+    } else {
+        sensorArea.intersectionPoints.secondLayer = currentLayer;
+    }
+
     for(let lineNum = 1; lineNum <= numOfLines; lineNum++){
         const linePos = lineNum/(numOfLines+1);
         let ks = keypoints(finalScanSegments, linePos);
@@ -151,8 +158,8 @@ function keypoints(contourScanSegments, linePos){
         }
   
     }
-    const endPoints = [];
-    sensorArea.wireEndpoints.push(endPoints);
+
+    //sensorArea.wireEndpoints.push(endPoints);
     for(let n = 0; n < contourScanSegments.length; n++){
         if(contourScanSegments[n].length<2){
             continue;
@@ -185,7 +192,8 @@ function keypoints(contourScanSegments, linePos){
                     const distanceToLineB = distanceToSegment(head[0],head[1],lineBPointA[0],lineBPointA[1],lineBPointB[0],lineBPointB[1]);
                     if(distanceToLineB>distanceToLineA){
                         result.push(head);
-                        endPoints.push(head);
+                        //endPoints.push(head);
+                        currentLayer.start.push(head);
                         break;
                     }
                 }
@@ -208,7 +216,8 @@ function keypoints(contourScanSegments, linePos){
                     const distanceToLineB = distanceToSegment(tail[0],tail[1],lineBPointA[0],lineBPointA[1],lineBPointB[0],lineBPointB[1]);
                     if(distanceToLineA>distanceToLineB){
                         result.push(tail);
-                        endPoints.push(tail);
+                        //endPoints.push(tail);
+                        currentLayer.end.push(tail);
                         break;
                     }
                 }

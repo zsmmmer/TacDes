@@ -13,6 +13,7 @@ const UserFlowState = {
 }
 
 let cyclesExecuted = 0;
+let currentLayer = null;
 
 const selectionTriggerDistance = 10;
 

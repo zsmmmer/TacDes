@@ -44,13 +44,16 @@ class SensorArea extends Shape {
     strokeWidth = 1,
     vertices = [],
     type = "",
-    wireEndpoints = []//array of pairs of endpoints for each wire
   ) {
     super(id, d, fill, stroke, strokeWidth); // 调用基类构造函数
     this.vertices = vertices; // 顶点数组
     this.type = type; // 图形类型（如 'polygon', 'curve'）
-    this.wireEndpoints = wireEndpoints;
-  }
+    this.intersectionPoints = {
+      firstLayer:{start:[], end:[]}, 
+      secondLayer:{start:[], end:[]}
+    };
+  };
+  
   // 绘制多边形的方法
   drawPolygon(svg) {
     const sensorLayer = svg.querySelector("#sensor-layer");
