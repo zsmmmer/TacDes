@@ -1,7 +1,7 @@
 .rightpanel {
   display: flex;
   position: absolute;
-  right: 40px;
+  right: 50px;
   top: 100px;
   width: 360px;
   height: auto;
@@ -217,8 +217,16 @@
   border: 2px solid rgba(10, 19, 44, 0.25);
   background: #fff;
   box-shadow: 2px 4px 8px 0px rgba(0, 74, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
+.rightpanel .tempbox img {
+  width: auto;
+  height: 94px;
+}
 .rightpanel .greybutton {
   width: 67px;
   height: 25px;

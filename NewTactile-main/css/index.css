@@ -2,8 +2,16 @@
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: #f1f7fc;
+  background-image: url("../assets/bgimg.png");
+  background-size: cover; /* 背景图片覆盖整个元素 */
+  background-repeat: no-repeat; /* 不重复 */
+  background-position: center; /* 居中显示 */
   box-shadow: 4px 4px 30.5px 0px rgba(0, 0, 0, 0.05);
+}
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* 禁止页面滚动 */
 }
 
 .app-container button {
@@ -21,9 +29,12 @@
 .canvas svg {
   position: absolute;
   width: 900px;
-  height: 690px;
-  background-color: rgba(255, 255, 255);
-  margin-top: 180px;
-  margin-left: 350px;
+  height: 600px;
+  top: 135px;
+  left: 400px;
   z-index: 0;
+  border: 2px solid #fff;
+  background: rgba(255, 255, 255, 0.8);
+
+  box-shadow: 0px 0px 10px 0px rgba(60, 112, 249, 0.05);
 }

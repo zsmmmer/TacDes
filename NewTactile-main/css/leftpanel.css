@@ -8,28 +8,36 @@
   width: 250px;
   height: 240px;
   background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 2px 4px 16.6px 0px rgba(0, 74, 255, 0.05);
 }
 
 .leftpanel .panel {
-  position: absolute;
-  top: 15px;
-  width: 200px;
-  height: 200px;
-  padding: 0;
-  margin: 0px 25px;
+  display: flex;
+  margin: 20px 20px;
   z-index: 0;
+  flex-direction: column;
 }
 
 .leftpanel .title {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 8px;
   z-index: 1;
+  height: auto;
+}
+.panel .title span {
+  color: var(--text-normal, rgba(9, 16, 33, 0.6));
+  font-family: "Inria Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .leftpanel .icon {
+  display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 3px;
   padding-top: 15px;
 }
 
@@ -40,7 +48,7 @@
   color: #091021cc;
   font-size: 18px;
   letter-spacing: 0;
-  line-height: normal;
+  line-height: 0px;
   z-index: 1;
 }
 
@@ -64,13 +72,15 @@
 }
 
 .leftpanel .img {
-  position: relative;
-  width: 20px;
-  height: 20px;
+  width: 18px;
 }
+/* .leftpanel .imgframe .img {
+  align-items: center;
+} */
 
 .leftpanel .imgframe {
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
   align-items: center;
   gap: 15px;
   position: relative;
@@ -78,6 +88,10 @@
   border: none;
   background: none;
   margin-right: 12px;
+  cursor: pointer; /* 鼠标变为手型 */
+  width: 30px;
+  height: 30px;
+  border-radius: 2px;
 }
 
 .leftpanel .parameter {
@@ -112,7 +126,8 @@
 }
 
 .parabox span {
-  color: rgba(9, 16, 33, 0.6);
+  color: var(--text-normal, rgba(9, 16, 33, 0.6));
+  font-family: "Inria Sans";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -128,14 +143,63 @@
 }
 
 .leftpanel .parabox button {
-  padding-left: 10px;
-  padding-right: 10px;
   border-radius: 4px;
-  background-color: #3c70f9;
+  background: rgba(60, 112, 249, 0.8);
   width: 100px;
   height: 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   z-index: 1;
+  color: #fff;
+  font-family: "Inria Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.imgframe.selected {
+  background: rgba(60, 112, 249, 0.8);
+}
+
+.noborder-input {
+  border: none; /* 去掉边框 */
+  outline: none; /* 去掉聚焦时的默认边框 */
+  background: transparent; /* 背景透明 */
+  color: var(--text-normal, rgba(9, 16, 33, 0.6));
+  font-family: "Inria Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  width: 50px; /* 设置宽度，可根据需要调整 */
+  text-align: right; /* 文本居中 */
+}
+
+.twoblock .bluebutton {
+  border-radius: 4px;
+  background-color: rgba(60, 112, 249, 0.8);
+  width: 100px;
+  height: 30px;
+  display: flex; /* 使用 Flexbox 布局 */
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
+  color: #fff;
+  font-family: "Inria Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-align: center;
+}
+
+/* 隐藏非当前参数部分 */
+.leftpanel .parameter-container .parameter {
+  display: none;
+}
+
+/* 显示当前选中的参数部分 */
+.leftpanel .parameter-container .parameter.visible {
+  display: flex;
 }
