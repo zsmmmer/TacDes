@@ -1,0 +1,109 @@
+.header {
+  position: absolute;
+  top: 21px;
+  left: 35px;
+  display: flex;
+  width: 97vw;
+  align-items: center;
+  font-family: "Inria Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  height: 4vh;
+  color: var(--text-normal, rgba(9, 16, 33, 0.6));
+  justify-content: space-between;
+}
+
+.logo-and-title {
+  display: flex;
+  align-items: center;
+}
+
+.header .logoimg {
+  width: 45px;
+  height: 35px;
+  flex-shrink: 0;
+}
+
+.header h1 {
+  color: var(--text-emphasise, rgba(9, 16, 33, 0.8));
+  font-family: "Inria Sans", sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 0;
+}
+
+.header .centerbox {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* 自动推动到右边 */
+  margin-right: auto; /* 自动推动到左边 */
+}
+
+.header .rightbox {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.header .unit {
+  align-items: center;
+  gap: 0px;
+  margin-right: 10px;
+}
+.header .unit input {
+  width: 40px;
+}
+
+.header .topimg {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+.header .toptxt {
+  cursor: pointer;
+  padding-right: 15px;
+  border-right: 0.5px solid rgba(9, 16, 33, 0.6);
+}
+
+.header .toptxtend {
+  padding-right: 15px;
+}
+
+.topimg {
+  cursor: pointer; /* 鼠标指针变成手型 */
+  width: 50px; /* 图片宽度 */
+  height: auto; /* 图片高度自动 */
+}
+.centerbox .unit:hover .topimg {
+  transform: scale(1.1); /* 悬停时图片稍微放大 */
+}
+
+.centerbox .unit:active {
+  transform: scale(0.95); /* 点击时缩小 */
+  opacity: 0.8; /* 点击时降低透明度 */
+}
+
+.toptxtend {
+  display: flex; /* 如果需要容器支持多子元素对齐 */
+  align-items: center; /* 垂直居中 */
+}
+
+.midtxt-input {
+  border: none; /* 去掉边框 */
+  outline: none; /* 去掉点击后的蓝色边框 */
+  font-family: "Inria Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  height: 4vh;
+  color: var(--text-normal, rgba(9, 16, 33, 0.6));
+  background: transparent; /* 背景透明 */
+  width: 100%; /* 根据需要调整宽度 */
+  max-width: 200px; /* 最大宽度限制 */
+}

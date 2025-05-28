@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tactile Editor</title>
+    <link rel="stylesheet" href="css/header.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <link rel="stylesheet" href="css/minibar.css" />
+    <link rel="stylesheet" href="css/rightpanel.css" />
+    <link rel="stylesheet" href="css/leftpanel.css" />
+    <link rel="stylesheet" href="css/toolbar.css" />
+    <link rel="stylesheet" href="css/index.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-and-title">
+          <img class="logoimg" src="assets/header/logo.png" alt="" />
+          <h1>TactileEditor</h1>
+        </div>
+
+        <!-- middle: centerbox -->
+        <div class="centerbox .center-item">
+          <button class="unit">
+            <img class="topimg" src="assets/header/newpage.png" alt="" />
+            <span class="toptxt">New page</span>
+          </button>
+          <button class="unit">
+            <label for="fileInput">
+              <img class="topimg" src="assets/header/upload.png" alt="Upload" />
+              <span class="toptxt">Upload</span>
+            </label>
+            <input
+              type="file"
+              id="fileInput"
+              accept=".svg"
+              style="display: none"
+            />
+          </button>
+          <button class="unit" id="download">
+            <img class="topimg" src="assets/header/download.png" alt="" />
+            <span class="toptxt">Download</span>
+          </button>
+          <button class="unit">
+            <img class="topimg" src="assets/header/undo.png" alt="" />
+            <span class="toptxtend">Undo</span>
+          </button>
+          <button class="unit">
+            <img class="topimg" src="assets/header/redo.png" alt="" />
+            <span class="toptxt">Redo</span>
+          </button>
+          <div class="toptxtend">
+            <input class="midtxt-input" type="text" value="Add Title Here" />
+          </div>
+        </div>
+
+        <!-- right: rightbox -->
+        <div class="rightbox">
+          <button class="unit">
+            <img class="topimg" src="assets/header/parameter.png" alt="" />
+            <span class="toptxtend">Parameters</span>
+          </button>
+          <button class="unit">
+            <img class="topimg" src="assets/header/tool.png" alt="" />
+            <span class="toptxtend">Tools</span>
+          </button>
+          <button class="unit">
+            <img class="topimg" src="assets/header/asset.png" alt="" />
+            <span class="toptxtend">Assets</span>
+          </button>
+          <button class="unit">
+            <img class="topimg" src="assets/header/3d.png" alt="" />
+            <span class="toptxtend">3D</span>
+          </button>
+          <button class="unit">
+            <img class="topimg" src="assets/header/prompt.png" alt="" />
+            <span class="toptxtend">Prompt</span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <!-- Canvas -->
+        <div class="canvas">
+          <svg
+            id="output"
+            xmlns="http://www.w3.org/2000/svg"
+            width="900px"
+            height="690px"
+          >
+            <!--shape-->
+            <g id="shape-layer"></g>
+            <!--sensor-->
+            <g id="sensor-layer"></g>
+            <!-- connector -->
+            <g id="connector-layer"></g>
+          </svg>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+          <div class="frame">
+            <button class="unit">
+              <img class="img" src="assets/toolbar/select.png" />
+              <div class="text">Select</div>
+            </button>
+
+            <button class="unit">
+              <img class="midimg" src="assets/toolbar/shape.png" />
+              <div class="text">Shape</div>
+            </button>
+            <button class="unit">
+              <img class="midimg" src="assets/toolbar/pen.png" />
+              <div class="text">Pen</div>
+            </button>
+            <button class="unit">
+              <img class="img" src="assets/toolbar/text.png" />
+              <div class="text">Text</div>
+            </button>
+
+            <button class="unit">
+              <img class="midimg" src="assets/toolbar/shape2.png" />
+              <div class="text">Shape</div>
+            </button>
+            <button class="unit" id="convertToSensor">
+              <img class="midimg" src="assets/toolbar/sensor.png" />
+              <div class="text">Sensor</div>
+            </button>
+            <button class="unit" id="convertToConnector">
+              <img class="img" src="assets/toolbar/connector.png" />
+              <div class="text">Connector</div>
+            </button>
+
+            <button class="unit">
+              <img class="midimg" src="assets/toolbar/wire.png" />
+              <div class="text">Wire</div>
+            </button>
+            <button class="unit" id="connectButton">
+              <img class="midimg" src="assets/toolbar/connect.png" />
+              <div class="text">Connect</div>
+            </button>
+            <div class="wideunit">
+              <img class="midimg" src="assets/toolbar/autolayout.png" />
+              <div class="text">Auto Layout</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Left panel -->
+        <div class="leftpanel">
+          <div class="panel">
+            <div class="title">
+              <img class="titleimg" src="assets/leftpanel/titleimage.png" />
+              <h1>Parameters /</h1>
+              <span>Layout</span>
+            </div>
+
+            <div class="icon">
+              <button class="imgframe selected">
+                <img class="img" src="assets/leftpanel/image1.png" />
+              </button>
+              <!-- <button class="imgframe">
+                <img class="img" src="assets/leftpanel/image2.png" />
+              </button> -->
+              <button class="imgframe">
+                <img class="img" src="assets/leftpanel/image3.png" />
+              </button>
+              <!-- <button class="imgframe">
+                <img class="img" src="assets/leftpanel/image4.png" />
+              </button> -->
+            </div>
+
+            <div class="parameter-container">
+              <!-- 默认显示的参数部分 -->
+              <div id="parameter1" class="parameter visible">
+                <div class="twoblock">
+                  <div class="parabox">
+                    <span>X num</span>
+                    <input
+                      type="number"
+                      id="xnum"
+                      placeholder="20"
+                      min="1"
+                      class="noborder-input"
+                    />
+                  </div>
+                  <div class="parabox">
+                    <span>Y num</span>
+                    <input
+                      type="number"
+                      id="ynum"
+                      placeholder="20"
+                      min="1"
+                      class="noborder-input"
+                    />
+                  </div>
+                </div>
+                <div class="oneblock">
+                  <div class="parabox">
+                    <span>Sensor</span>
+                    <input
+                      type="number"
+                      id="ynum"
+                      value=""
+                      min="1"
+                      class="noborder-input"
+                    />
+                  </div>
+                </div>
+                <div class="twoblock">
+                  <div class="parabox">
+                    <span>Min Dis</span>
+                    <input
+                      type="number"
+                      id="ynum"
+                      value=""
+                      min="1"
+                      class="noborder-input"
+                    />
+                  </div>
+                  <button id="generate" class="bluebutton">Generate</button>
+                </div>
+              </div>
+
+              <!-- 第二组参数部分 -->
+              <div id="parameter2" class="parameter">
+                <div class="oneblock">
+                  <div class="parabox">
+                    <span>Sampling Distance</span>
+                    <input
+                      type="number"
+                      id="ynum"
+                      placeholder="10"
+                      min="1"
+                      class="noborder-input"
+                    />
+                  </div>
+                </div>
+                <div class="oneblock">
+                  <div class="parabox">
+                    <span>Number of Lines</span>
+                    <input
+                      type="number"
+                      id="ynum"
+                      placeholder="10"
+                      min="1"
+                      class="noborder-input"
+                    />
+                  </div>
+                </div>
+                <div class="twoblock">
+                  <button class="bluebutton">Place</button>
+                  <button id="generate" class="bluebutton">Generate</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="rightpanel">
+          <div class="title">
+            <img src="./assets/rightpanel/assets.png" alt="" class="titleimg" />
+            <span class="assettxt">Assets</span>
+          </div>
+
+          <div class="list" id="list-container">
+            <div class="titleblock">
+              <span class="blocktxt">List</span>
+            </div>
+            <!-- <div class="item">
+              <div class="name">
+                <span class="number">1</span>
+                <img src="./assets/toolbar/connector.png" alt="" class="img">
+                <button class="txt">Connector x1</button>
+              </div>
+              <div class="stage">
+                <button class="choices">
+                  <img src="./assets/rightpanel/dot.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/eye.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/circle.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/zhankai.png" alt="" class="choices">
+                </button>
+              </div>
+            </div>
+            <div class="spanitem">
+              <div class="name">
+                <span class="number">1</span>
+                <img src="./assets/toolbar/sensor.png" alt="" class="img">
+                <button class="txt">Sensor Area 1</button>
+              </div>
+              <div class="stage">
+                <button class="choices">
+                  <img src="./assets/rightpanel/dot.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/eye.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/circle.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/shouqi.png" alt="" class="choices">
+                </button>
+              </div>
+            </div>
+            <div class="spanitem">
+              <div class="name">
+                <span class="number">2</span>
+                <img src="./assets/toolbar/sensor.png" alt="" class="img">
+                <button class="txt">Sensor Area 2</button>
+              </div>
+              <div class="stage">
+                <button class="choices">
+                  <img src="./assets/rightpanel/dot.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/eye.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/circle.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/shouqi.png" alt="" class="choices">
+                </button>
+              </div>
+            </div>
+            <div class="item">
+              <div class="name">
+                <span class="number">2</span>
+                <img src="./assets/toolbar/shape2.png" alt="" class="img">
+                <button class="txt">Shape 1</sbutton>
+              </div>
+              <div class="stage">
+                <button class="choices">
+                  <img src="./assets/rightpanel/dot.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/eye.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/circle.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="" alt="" class="choices">
+                </button>
+              </div>
+            </div>
+            <div class="item">
+              <div class="name">
+                <span class="number">3</span>
+                <img src="./assets/toolbar/shape2.png" alt="" class="img">
+                <button class="txt">Shape 2</sbutton>
+              </div>
+              <div class="stage">
+                <button class="choices">
+                  <img src="./assets/rightpanel/dot.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/eye.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="./assets/rightpanel/circle.png" alt="" class="choices">
+                </button>
+                <button class="choices">
+                  <img src="" alt="" class="choices">
+                </button>
+              </div>
+            </div> -->
+          </div>
+
+          <div class="library">
+            <div class="titleblock">
+              <span class="blocktxt">Library</span>
+            </div>
+
+            <div class="shubar">
+              <div class="block">
+                <span class="titletxt">Yours</span>
+                <span class="txt">Shape</span>
+                <span class="txt">Sensor</span>
+                <span class="txt">Connector</span>
+              </div>
+              <div class="block">
+                <span class="titletxt">Template</span>
+                <span class="txt">Shape</span>
+                <span class="txt">Sensor</span>
+                <span class="txt">Connector</span>
+              </div>
+            </div>
+
+            <div class="lib">
+              <div class="temp">
+                <div class="tempbox">
+                  <img src="assets/rightpanel/template1.png" alt="" />
+                </div>
+                <div class="tempbox">
+                  <img src="assets/rightpanel/template2.png" alt="" />
+                </div>
+                <div class="tempbox">
+                  <img src="assets/rightpanel/template3.png" alt="" />
+                </div>
+                <div class="tempbox">
+                  <img src="assets/rightpanel/template4.png" alt="" />
+                </div>
+              </div>
+            </div>
+
+            <div class="buttonbar">
+              <div class="greybutton">
+                <button class="greytxt">Upload</button>
+              </div>
+              <div class="bluebutton">
+                <button class="bluetxt">Add</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer content -->
+        <div class="footer">
+          <div class="frame">
+            <button class="unit is-selected" data-layer="shape-layer">
+              <img class="img" src="assets/footer/shape.png" />
+              <div class="text">shape</div>
+            </button>
+        
+            <button class="unit is-selected" data-layer="sensor-layer">
+              <img class="img" src="assets/footer/sensor.png" />
+              <div class="text">sensor</div>
+            </button>
+        
+            <button class="unit is-selected" data-layer="connector-layer">
+              <img class="img" src="assets/footer/connector.png" />
+              <div class="text">connector</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Float chatbar -->
+        <!-- <div class="minibar">
+          <div class="chat">
+            <img src="./assets/minibar/bell.png" alt="" class="img" />
+            <span class="txt">Lines exist that may cross.</span>
+          </div>
+
+          <div class="find">
+            <span class="txt">Find</span>
+            <img src="./assets/minibar/find.png" alt="" class="img" />
+          </div>
+        </div>
+      </main> -->
+
+      <footer></footer>
+    </div>
+    <script src="js/shapeclass.js"></script>
+    <script type="module" src="js/vertices.js"></script>
+    <script type="module" src="js/beautify.js"></script>
+  </body>
+</html>
