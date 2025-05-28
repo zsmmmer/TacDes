@@ -11,7 +11,7 @@ TacDes is a web-based toolkit to streamline the design process of resistive tact
 Paper Link: https://dl.acm.org/doi/10.1145/3706599.3719721
 
 Bibtex: 
->
+```
     @inproceedings{10.1145/3706599.3719721,
     author = {He, Xinning and Zhang, Shiman and Ma, Luyao and Li, Jingyi and Luo, Yiyue},
     title = {TacDes: Design Interface toward Ubiquitous Tactile Sensing},
@@ -30,3 +30,4 @@ Bibtex:
     },
     series = {CHI EA '25}
     }
+```
