@@ -9,6 +9,7 @@ TacDes is a web-based toolkit to streamline the design process of resistive tact
 
 ### Publication
 Paper Link: https://dl.acm.org/doi/10.1145/3706599.3719721
+
 Bibtex: 
 >
     @inproceedings{10.1145/3706599.3719721,
